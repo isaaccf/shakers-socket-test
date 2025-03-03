@@ -6,6 +6,17 @@ const { Server } = require("socket.io");
 // Crear aplicación Express
 const app = express();
 
+// Configuración de CORS para Express
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
+  next();
+});
+
 // Crear servidor HTTP
 const server = http.createServer(app);
 
@@ -15,11 +26,9 @@ let counter = 0;
 // Inicializar Socket.IO con CORS configurado
 const io = new Server(server, {
   cors: {
-    origin:
-      process.env.NODE_ENV === "production"
-        ? false
-        : ["http://localhost:3002", "http://127.0.0.1:3002"],
+    origin: "*", // Permitir todas las conexiones - puedes restringirlo después
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 
@@ -59,7 +68,7 @@ io.on("connection", (socket) => {
 });
 
 // Definir puerto
-const PORT = process.env.PORT || 80;
+const PORT = process.env.PORT || 3006;
 
 // Iniciar el servidor
 server.listen(PORT, () => {
